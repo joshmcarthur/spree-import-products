@@ -1,0 +1,18 @@
+<h2><%= t('form.product_import.heading') %></h2>
+
+
+<%= render "shared/error_messages", :target => @product_import %>
+<%= form_for(:product_import,  :url => admin_product_import_index_path, :method => :post, :html => { :multipart => true }) do |f| %>
+<fieldset>
+  <%= f.field_container :data_file do %>
+    <%= f.label :data_file, t('form.product_import.new.data_file') %>
+    <%= f.file_field :data_file %>
+    <%= f.error_message_on :data_file %>
+  <% end %>
+</fieldset>
+
+<p class="form-buttons">
+  <%= button t("actions.create") %>
+</p>
+
+<% end %>

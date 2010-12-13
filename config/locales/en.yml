@@ -1,0 +1,7 @@
+en:
+    product_import_index: 'Import Products'
+    form:
+        product_import:
+            heading: 'Import Products from CSV'
+            new:
+                data_file: "Product Data File"
