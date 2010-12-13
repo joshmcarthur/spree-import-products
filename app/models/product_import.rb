@@ -24,23 +24,23 @@ class ProductImport < ActiveRecord::Base
       #Get products *before* import - 
       @products_before_import = Product.all
 
-      
+      columns = ImportProductSettings::COLUMN_MAPPINGS
       rows = FasterCSV.read(self.data_file.path)
       log("Importing products for #{self.data_file_file_name} began at #{Time.now}")
-      rows[INITIAL_ROWS_TO_SKIP..-1].each do |row|
+      rows[ImportProductSettings::INITIAL_ROWS_TO_SKIP..-1].each do |row|
         product_information = {}
         
         #Easy ones first
-        product_information[:sku] = row[COLUMN_MAPPINGS['SKU']]
-        product_information[:name] = row[COLUMN_MAPPINGS['Name']]
-        product_information[:price] = row[COLUMN_MAPPINGS['Master Price']]
-        product_information[:cost_price] = row[COLUMN_MAPPINGS['Cost Price']]
+        product_information[:sku] = row[columns['SKU']]
+        product_information[:name] = row[columns['Name']]
+        product_information[:price] = row[columns['Master Price']]
+        product_information[:cost_price] = row[columns['Cost Price']]
         product_information[:available_on] = DateTime.now - 1.day #Yesterday to make SURE it shows up
-        product_information[:weight] = row[COLUMN_MAPPINGS['Weight']]
-        product_information[:height] = row[COLUMN_MAPPINGS['Height']]
-        product_information[:depth] = row[COLUMN_MAPPINGS['Depth']]
-        product_information[:width] = row[COLUMN_MAPPINGS['Width']]
-        product_information[:description] = COLUMN_MAPPINGS['Description']
+        product_information[:weight] = row[columns['Weight']]
+        product_information[:height] = row[columns['Height']]
+        product_information[:depth] = row[columns['Depth']]
+        product_information[:width] = row[columns['Width']]
+        product_information[:description] = columns['Description']
         
 
         #Create the product skeleton - should be valid
@@ -54,19 +54,19 @@ class ProductImport < ActiveRecord::Base
         product_obj.save
 
         #Now we have all but images and taxons loaded
-        associate_taxon('Category', row[COLUMN_MAPPINGS['Category']], product_obj)
+        associate_taxon('Category', row[columns['Category']], product_obj)
         
         #Just images 
-        find_and_attach_image(row[COLUMN_MAPPINGS['Image Main']], product_obj)
-        find_and_attach_image(row[COLUMN_MAPPINGS['Image 2']], product_obj)
-        find_and_attach_image(row[COLUMN_MAPPINGS['Image 3']], product_obj)
-        find_and_attach_image(row[COLUMN_MAPPINGS['Image 4']], product_obj)
+        find_and_attach_image(row[columns['Image Main']], product_obj)
+        find_and_attach_image(row[columns['Image 2']], product_obj)
+        find_and_attach_image(row[columns['Image 3']], product_obj)
+        find_and_attach_image(row[columns['Image 4']], product_obj)
 
         #Return a success message
         log("#{product_obj.name} successfully imported.\n")
       end
       
-      if DESTROY_ORIGINAL_PRODUCTS_AFTER_IMPORT
+      if ImportProductSettings::DESTROY_ORIGINAL_PRODUCTS_AFTER_IMPORT
         @products_before_import.each { |p| p.destroy }
       end
       
@@ -91,7 +91,7 @@ class ProductImport < ActiveRecord::Base
   #Message is string, severity symbol - either :info, :warn or :error
   
   def log(message, severity = :info)   
-    @rake_log ||= ActiveSupport::BufferedLogger.new(LOGFILE)
+    @rake_log ||= ActiveSupport::BufferedLogger.new(ImportProductSettings::LOGFILE)
     message = "[#{Time.now.to_s(:db)}] [#{severity.to_s.capitalize}] #{message}\n"
     @rake_log.send severity, message
     puts message
@@ -107,7 +107,7 @@ class ProductImport < ActiveRecord::Base
   def find_and_attach_image(filename, product)
     #Does the file exist? Can we read it?
     return if filename.blank?
-    filename = PRODUCT_IMAGE_PATH + filename
+    filename = ImportProductSettings::PRODUCT_IMAGE_PATH + filename
     unless File.exists?(filename) && File.readable?(filename)
       log("Image #{filename} was not found on the server, so this image was not imported.", :warn)
       return nil

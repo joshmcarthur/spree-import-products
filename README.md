@@ -18,8 +18,12 @@ Apart from that, just testing really.
 INSTALLATION
 ==============
 1) Add the gem to your Gemfile, and run bundle install.
-2) rake db:migrate
-3) Run application - you may want to check out lib/import_products.rb for settings you can configure, as well as the
-default column order.
+    gem 'import_products, :git => 'git://github.com/joshmcarthur/spree-import-products.git'
+    bundle install
+2) 'Install' the extension - copy a migration and an initializer
+    rake import_products:install
+3) rake db:migrate
+4) Configure the extension to suit your application by changing config variables in config/initializers/import_product_settings.rb
+3) Run application!
 
 Copyright (c) 2010 Josh McArthur, released under the MIT License
