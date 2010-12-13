@@ -26,4 +26,8 @@ INSTALLATION
 4. Configure the extension to suit your application by changing config variables in config/initializers/import_product_settings.rb
 5. Run application!
 
+ATTRIBUTION
+==============
+The product import script was based on a simple import script written by Brian Quinn [here](https://gist.github.com/31710). I've extended it and tweaked it to fit my needs.
+
 Copyright (c) 2010 Josh McArthur, released under the MIT License
