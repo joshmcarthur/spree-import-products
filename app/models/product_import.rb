@@ -1,14 +1,15 @@
 # This model is the master routine for uploading products
-# Requires Paperclip and FasterCSV to upload the CSV file and read it nicely.
+# Requires Paperclip and CSV to upload the CSV file and read it nicely.
 
-# Author:: Josh McArthur
+# Original Author:: Josh McArthur
+# Author:: Chetan Mittal
 # License:: MIT
 
 class ProductImport < ActiveRecord::Base
   has_attached_file :data_file, :path => ":rails_root/lib/etc/product_data/data-files/:basename.:extension"
   validates_attachment_presence :data_file
   
-  require 'fastercsv'
+  require 'csv'
   require 'pp'
   
   ## Data Importing:
@@ -23,9 +24,14 @@ class ProductImport < ActiveRecord::Base
     begin
       #Get products *before* import - 
       @products_before_import = Product.all
+      @names_of_products_before_import = []
+      @products_before_import.each do |product|
+        @names_of_products_before_import << product.name
+      end
+      log("#{@names_of_products_before_import}")
 
       columns = ImportProductSettings::COLUMN_MAPPINGS
-      rows = FasterCSV.read(self.data_file.path)
+      rows = CSV.read(self.data_file.path)
       log("Importing products for #{self.data_file_file_name} began at #{Time.now}")
       rows[ImportProductSettings::INITIAL_ROWS_TO_SKIP..-1].each do |row|
         product_information = {}
@@ -50,20 +56,23 @@ class ProductImport < ActiveRecord::Base
           next
         end
         
-        #Save the object before creating asssociated objects
-        product_obj.save
-
-        #Now we have all but images and taxons loaded
-        associate_taxon('Category', row[columns['Category']], product_obj)
+        log("#{product_obj.name}")
+        if @names_of_products_before_import.include? product_obj.name
+          log("#{product_obj.name} is already in the system.\n")
+        else
+          #Save the object before creating asssociated objects
+          product_obj.save
+          #Now we have all but images and taxons loaded
+          associate_taxon('Category', row[columns['Category']], product_obj)
+          #Just images 
+          find_and_attach_image(row[columns['Image Main']], product_obj)
+          find_and_attach_image(row[columns['Image 2']], product_obj)
+          find_and_attach_image(row[columns['Image 3']], product_obj)
+          find_and_attach_image(row[columns['Image 4']], product_obj)
+          #Return a success message
+          log("#{product_obj.name} successfully imported.\n")
+        end
         
-        #Just images 
-        find_and_attach_image(row[columns['Image Main']], product_obj)
-        find_and_attach_image(row[columns['Image 2']], product_obj)
-        find_and_attach_image(row[columns['Image 3']], product_obj)
-        find_and_attach_image(row[columns['Image 4']], product_obj)
-
-        #Return a success message
-        log("#{product_obj.name} successfully imported.\n")
       end
       
       if ImportProductSettings::DESTROY_ORIGINAL_PRODUCTS_AFTER_IMPORT

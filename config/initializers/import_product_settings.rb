@@ -27,7 +27,7 @@ class ImportProductSettings
     #This path is the path that the import code will search for filenames matching those in your CSV file
     #As each product is saved, Spree (Well, paperclip) grabs it, transforms it into a range of sizes and
     #saves the resulting files somewhere else - this is just a repository of originals.
-    PRODUCT_IMAGE_PATH = "#{Rails.root}/lib/etc/product-data/product-images/"
+    PRODUCT_IMAGE_PATH = "#{Rails.root}/lib/etc/product_data/product-images/"
     
     #From experience, CSV files from clients tend to have a few 'header' rows - count them up if you have them,
     #and enter this number in here - the import script will skip these rows.
