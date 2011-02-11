@@ -46,7 +46,7 @@ class ProductImport < ActiveRecord::Base
         product_information[:height] = row[columns['Height']]
         product_information[:depth] = row[columns['Depth']]
         product_information[:width] = row[columns['Width']]
-        product_information[:description] = columns['Description']
+        product_information[:description] = row[columns['Description']]
         
 
         #Create the product skeleton - should be valid
