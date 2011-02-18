@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   #s.description = 'Add (optional) gem description here'
   s.required_ruby_version = '>= 1.8.7'
 
-  s.author            = 'Josh McArthur'
-  s.email             = 'josh@3months.com'
-  s.homepage          = 'joshmcarthur.me'
+  s.author            = 'Chetan Mittal'
+  s.email             = 'chetan.mittal@niamtech.com'
+  s.homepage          = 'http://chetanmittal.heroku.com'
 
   s.files        = Dir['CHANGELOG', 'README.md', 'LICENSE', 'lib/**/*', 'app/**/*']
   s.require_path = 'lib'
