@@ -15,9 +15,8 @@ class Admin::ProductImportController < Admin::BaseController
   
   def create
     @product_import = ProductImport.create(params[:product_import])
-    #import_data returns an array with two elements - a symbol (notice or error), and a message
-    import_results = @product_import.import_data
-    flash[import_results[0]] = import_results[1]
+    Delayed::Job.enqueue ImportJob.new(@product_import, @current_user)
+    flash[:notice] = t('product_import_processing')
     render :new
   end
 end

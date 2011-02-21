@@ -13,7 +13,10 @@ namespace :import_products do
       destination = File.join(Rails.root, 'db')
       puts "INFO: Mirroring assets from #{source} to #{destination}"
       Spree::FileUtilz.mirror_files(source, destination)
-    end
+      
+      puts "NOTE: This extensions uses delayed job - you need to generate additional migrations for" +
+      " this gem by executing `rails generate delayed_job_migrations'"
+  end
 
 ## I want to move ahead with same configuration we have in the spree-import-products gem    
 #    desc "Copies import products config (NOTE: I don't know what this will do in Rails 3.1)"

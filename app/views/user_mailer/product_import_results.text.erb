@@ -1,0 +1,18 @@
+Hello,
+
+<% if @error_message %>
+  Something went wrong during the product import.
+  Common causes for this include:
+  - Badly formatted CSV
+  - Special characters within the file
+  - Incorrect data
+  - Application or database error
+ 
+  Please check your file and try again.
+  To help diagnose the problem, we have attached the log file for the imports.
+<% else %>
+  This is a quick email to let you know that the product import you submitted has been completed.
+  You can now see the products you added visible in your store.
+<% end %>
+
+

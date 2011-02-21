@@ -10,6 +10,9 @@ module ImportProducts
       Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
         Rails.env.production? ? require(c) : load(c)
       end
+      
+      UserMailer.send(:include, ImportProducts::UserMailerExt)
+      
     end
 
     config.to_prepare &method(:activate).to_proc

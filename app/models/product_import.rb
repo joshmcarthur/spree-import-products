@@ -83,7 +83,7 @@ class ProductImport < ActiveRecord::Base
       
     rescue Exception => exp
       log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
-      return [:error, "The file data could not be imported. Please check that the spreadsheet is a CSV file, and is correctly formatted."]
+      raise Exception(exp.message)
     end
     
     #All done!
