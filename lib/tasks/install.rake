@@ -3,7 +3,6 @@ namespace :import_products do
   task :install do
     Rake::Task['import_products:install:migrations'].invoke
     Rake::Task['import_products:install:assets'].invoke
-    Rake::Task['import_products:install:config'].invoke
   end
 
   namespace :install do
@@ -17,15 +16,6 @@ namespace :import_products do
       puts "NOTE: This extensions uses delayed job - you need to generate additional migrations for" +
       " this gem by executing `rails generate delayed_job_migrations'"
   end
-
-## I want to move ahead with same configuration we have in the spree-import-products gem    
-#    desc "Copies import products config (NOTE: I don't know what this will do in Rails 3.1)"
-#    task :config do
-#      source = File.join(File.dirname(__FILE__), '..', '..', 'config', 'initializers', 'import_product_settings.rb')
-#      destination = File.join(Rails.root, 'config', 'initializers', 'import_product_settings.rb')
-#      puts "INFO: Mirroring assets from #{source} to #{destination}"
-#      Spree::FileUtilz.mirror_files(source, destination)
-#    end
 
     desc "Copies all assets (NOTE: This will be obsolete with Rails 3.1)"
     task :assets do
