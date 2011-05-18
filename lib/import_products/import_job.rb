@@ -2,12 +2,12 @@ module ImportProducts
   class ImportJob
     attr_accessor :product_import_id
     attr_accessor :user_id
-    
+
     def initialize(product_import_record, user)
       self.product_import_id = product_import_record.id
       self.user_id = user.id
     end
-    
+
     def perform
       begin
         product_import = ProductImport.find(self.product_import_id)
@@ -19,3 +19,4 @@ module ImportProducts
     end
   end
 end
+
