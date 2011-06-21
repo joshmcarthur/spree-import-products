@@ -60,12 +60,14 @@ Ttttteeeessssttttiiinnnggg!!
 INSTALLATION
 ==============
 1. Add the gem to your Gemfile, and run bundle install.
-    gem 'import_products, :git => 'git://github.com/joshmcarthur/spree-import-products.git'
-    bundle install
-2. 'Install' the extension - copy a migration and an initializer
-    rake import_products:install
-3. rake db:migrate
-4. Configure the extension to suit your application by changing config variables in config/initializers/import_product_settings.rb
+    `gem 'import_products', :git => 'git://github.com/joshmcarthur/spree-import-products.git'` then `bundle install`
+
+2. 'Install' the extension - copy a migration and an initializer. `rake import_products:install`
+
+3. Do a db migration. `rake db:migrate`
+
+4. Configure the extension to suit your application by changing config variables in `config/initializers/import_product_settings.rb`
+
 5. Run application!
 
 ATTRIBUTION
