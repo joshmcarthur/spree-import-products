@@ -60,13 +60,7 @@ Ttttteeeessssttttiiinnnggg!!
 INSTALLATION
 ==============
 1. Add the gem to your Gemfile, and run bundle install.
-    ```ruby
-    gem 'import_products', :git => 'git://github.com/joshmcarthur/spree-import-products.git'
-    ```
-    then
-    ```ruby
-    bundle install
-    ```
+    `gem 'import_products', :git => 'git://github.com/joshmcarthur/spree-import-products.git'` then `bundle install`
 
 2. 'Install' the extension - copy a migration and an initializer. `rake import_products:install`
 
