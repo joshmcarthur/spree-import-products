@@ -61,7 +61,7 @@ INSTALLATION
 ==============
 1. Add the gem to your Gemfile, and run bundle install.
     ```ruby
-    gem 'import_products, :git => 'git://github.com/joshmcarthur/spree-import-products.git'
+    gem 'import_products', :git => 'git://github.com/joshmcarthur/spree-import-products.git'
     ```
     then
     ```ruby
