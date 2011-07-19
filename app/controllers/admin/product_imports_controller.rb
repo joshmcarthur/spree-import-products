@@ -17,6 +17,6 @@ class Admin::ProductImportsController < Admin::BaseController
     @product_import = ProductImport.create(params[:product_import])
     Delayed::Job.enqueue ImportProducts::ImportJob.new(@product_import, @current_user)
     flash[:notice] = t('product_import_processing')
-    render :new
+    redirect_to admin_product_imports_path
   end
 end
