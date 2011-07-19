@@ -1,6 +1,6 @@
 en:
     product_import_processing: 'Thanks, your import has been added to the queue for processing. You will receive an email confirming the import once it has completed.'
-    product_import_index: 'Import Products'
+    product_imports: 'Import Products'
     form:
         product_import:
             heading: 'Import Products from CSV'

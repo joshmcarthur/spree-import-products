@@ -1,6 +1,6 @@
 class ImportProductsHooks < Spree::ThemeSupport::HookListener
   # custom hooks go here
   insert_after :admin_tabs do
-   %(<%= tab(:product_import_index) %>)
+   %(<%= tab(:product_imports) %>)
   end
 end
