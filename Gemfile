@@ -1,4 +1,7 @@
 source "http://rubygems.org"
-gem 'delayed_job'
 
+# See import_products.gemspec for dependencies
+# Running `bundle install` will detect and install
+# dependencies from there
+gemspec
 
