@@ -1,6 +1,6 @@
 <h2><%= t('form.product_import.heading') %></h2>
 
-<%= render "shared/error_messages", :target => @product_import %>
+<%= render "spree/shared/error_messages", :target => @product_import %>
 <%= form_for([:admin, @product_import], :method => :post, :html => { :multipart => true }) do |f| %>
 <fieldset>
   <%= f.field_container :data_file do %>
