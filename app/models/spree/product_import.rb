@@ -20,7 +20,7 @@ module Spree
 	  # Meta keywords and description are created on the product model
 
 	  def import_data!
-	    # begin
+	    begin
 	      #Get products *before* import -
 	      @products_before_import = Product.all
 	      @names_of_products_before_import = @products_before_import.map(&:name)
@@ -78,10 +78,10 @@ module Spree
 
 	      log("Importing products for #{self.data_file_file_name} completed at #{DateTime.now}")
 
-	    # rescue Exception => exp
-	    # 	      log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
-	    # 	      raise Exception(exp.message)
-	    # 	    end
+			rescue Exception => exp
+				log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
+				raise Exception(exp.message)
+			end
 
 	    #All done!
 	    return [:notice, "Product data was successfully imported."]
