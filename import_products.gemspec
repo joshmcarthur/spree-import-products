@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
 
-  s.add_dependency('spree_core', '>= 0.30.1')
+  s.add_dependency('spree_core', '>= 0.80.0.beta')
   s.add_dependency('delayed_job')
 end
