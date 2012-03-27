@@ -1,6 +1,15 @@
 en:
     product_import_processing: 'Thanks, your import has been added to the queue for processing. You will receive an email confirming the import once it has completed.'
     product_imports: 'Import Products'
+    delete_product_import: "Delete"
+    delete_product_import_successful: "Import and products associated deleted successfully"
+    confirm_delete_product_import: "Deleting this import will delete all the product associated, are you sure ?"
+    product_import:
+      state:
+        created: "Created"
+        started: "In Progress"
+        completed: "Completed"
+        failed: "Failed"
     form:
         product_import:
             heading: 'Import Products from CSV'

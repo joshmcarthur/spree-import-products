@@ -1,13 +1,16 @@
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../../config/environment", __FILE__)
-require 'rspec/rails'
-require 'fabrication'
+require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+require 'rspec/rails'
+
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f }
+
+# Requires factories defined in spree_core
+require 'spree/core/testing_support/factories'
 
 RSpec.configure do |config|
   # == Mock Framework
@@ -26,6 +29,5 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+  config.include Spree::UrlHelpers
 end
-
-@configuration ||= AppConfiguration.find_or_create_by_name("Default configuration")

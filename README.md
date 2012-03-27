@@ -53,9 +53,16 @@ All the configuration for this extension is inside the initializer generated whe
 In most cases, it's unlikely you will need to change defaults, but it's there is you need it.
 
 
-TODOs
-==============
-Ttttteeeessssttttiiinnnggg!!
+TESTING
+=======
+
+```ruby
+rake test_app
+cd spec/dummy
+rake db:create
+rake db:migrate db:test:prepare
+rails generate delayed_job:active_record
+```
 
 INSTALLATION
 ==============
