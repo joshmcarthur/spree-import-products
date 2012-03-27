@@ -1,9 +1,20 @@
 module ImportProducts
   module Generators
     class InstallGenerator < Rails::Generators::Base
+      def self.source_paths
+        paths = self.superclass.source_paths
+        paths << File.expand_path('../templates', "../../#{__FILE__}")
+        paths << File.expand_path('../templates', "../#{__FILE__}")
+        paths << File.expand_path('../templates', __FILE__)
+        paths.flatten
+      end
 
       def add_migrations
         run 'bundle exec rake railties:install:migrations FROM=import_products'
+      end
+
+      def add_files
+        template 'config/initializers/import_product_settings.rb', 'config/initializers/import_product_settings.rb'
       end
 
       def run_migrations
