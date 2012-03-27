@@ -137,6 +137,7 @@ module Spree
         raise ImportError, exp.message
       end
       #All done!
+      save #save product_ids
       return [:notice, "Product data was successfully imported."]
     end
 

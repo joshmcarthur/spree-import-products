@@ -70,6 +70,7 @@ module Spree
 
       it "tracks product created ids" do
         valid_import.import_data!
+        valid_import.reload
         valid_import.product_ids.should == [Spree::Product.last.id]
         valid_import.products.should == [Spree::Product.last]
       end
