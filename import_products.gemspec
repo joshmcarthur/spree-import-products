@@ -20,6 +20,18 @@ Gem::Specification.new do |s|
   s.add_dependency('delayed_job')
   s.add_dependency('delayed_job_active_record')
 
-  s.add_development_dependency 'spree_sample'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency('spree_sample')
+  s.add_development_dependency('sqlite3')
+  s.add_development_dependency('ffaker', '~> 1.12.0')
+  s.add_development_dependency('rspec-rails')
+  s.add_development_dependency('capybara')
+  s.add_development_dependency('launchy', '2.0.5')
+  s.add_development_dependency('factory_girl')
+
+  if RUBY_VERSION < "1.9"
+    s.add_development_dependency('ruby-debug')
+  else
+    s.add_development_dependency('ruby-debug19')
+  end
+
 end
