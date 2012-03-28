@@ -11,12 +11,9 @@ module ImportProducts
     def perform
       begin
         product_import = Spree::ProductImport.find(self.product_import_id)
-        product_import.start
-        results = product_import.import_data!
+        results = product_import.import_data!(IMPORT_PRODUCT_SETTINGS[:transaction])
         Spree::UserMailer.product_import_results(Spree::User.find(self.user_id)).deliver
-        product_import.complete
       rescue Exception => exp
-        product_import.failure
         Spree::UserMailer.product_import_results(Spree::User.find(self.user_id), exp.message).deliver
       end
     end

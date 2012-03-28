@@ -38,7 +38,7 @@ module Spree
         ProductImport.new.send(:create_variant_for, product, :with => params.merge(:"tshirt-size" => "Large", :"tshirt-color" => "Yellow"))
         variant = product.variants.last
         product.option_types.should =~ [size, color]
-        variant.option_values.should =~ Spree::OptionValue.where(:name => %w(Large Yellow))
+        variant.option_values.should =~ OptionValue.where(:name => %w(Large Yellow))
       end
 
       it "should not duplicate option_values for existing variant" do
@@ -48,7 +48,7 @@ module Spree
         end.to change(product.variants, :count).by(1)
         variant = product.variants.last
         product.option_types.should =~ [size, color]
-        variant.option_values.reload.should =~ Spree::OptionValue.where(:name => %w(Large Yellow))
+        variant.option_values.reload.should =~ OptionValue.where(:name => %w(Large Yellow))
       end
 
       it "throws an exception when variant with sku exist for another product" do
@@ -63,41 +63,52 @@ module Spree
       let(:valid_import) { ProductImport.create :data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'valid.csv')) }
       let(:invalid_import) { ProductImport.create :data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'invalid.csv')) }
 
-      it "create products successfully with valid csv" do
-        expect { valid_import.import_data! }.to change(Spree::Product, :count).by(1)
-        Spree::Product.last.variants.count.should == 2
+      context "on valid csv" do
+        it "create products successfully" do
+          expect { valid_import.import_data! }.to change(Product, :count).by(1)
+          Product.last.variants.count.should == 2
+        end
+
+        it "tracks product created ids" do
+          valid_import.import_data!
+          valid_import.reload
+          valid_import.product_ids.should == [Product.last.id]
+          valid_import.products.should == [Product.last]
+        end
+
+        it "handles product properties" do
+          Property.create :name => "brand", :presentation => "Brand"
+          expect { @import = ProductImport.create(:data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'products_with_properties.csv'))).import_data!(true) }.to change(Product, :count).by(1)
+          (product = Product.last).product_properties.map(&:value).should == ["Rails"]
+          product.variants.count.should == 2
+        end
       end
 
-      it "tracks product created ids" do
-        valid_import.import_data!
-        valid_import.reload
-        valid_import.product_ids.should == [Spree::Product.last.id]
-        valid_import.products.should == [Spree::Product.last]
-      end
+      context "on invalid csv" do
+        it "rollback transation when params = true (transaction)" do
+          expect { invalid_import.import_data! }.to raise_error(ImportError)
+          Product.count.should == 0
+        end
 
-      it "rollback transation on invalid csv and params = true (transaction)" do
-        expect { invalid_import.import_data! }.to raise_error(ImportError)
-        Spree::Product.count.should == 0
-      end
+        it "should not tracks product created ids" do
+          expect { invalid_import.import_data! }.to raise_error(ImportError)
+          invalid_import.reload
+          invalid_import.product_ids.should be_empty
+          invalid_import.products.should be_empty
+        end
 
-      it "sql are permanent on invalid csv and params = false (no transaction)" do
-        expect { invalid_import.import_data!(false) }.to raise_error(ImportError)
-        Spree::Product.count.should == 1
-      end
-
-      it "handles product properties" do
-        Spree::Property.create :name => "brand", :presentation => "Brand"
-        expect { @import = ProductImport.create(:data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'products_with_properties.csv'))).import_data!(true) }.to change(Spree::Product, :count).by(1)
-        (product = Spree::Product.last).product_properties.map(&:value).should == ["Rails"]
-        product.variants.count.should == 2
+        it "sql are permanent when params = false (no transaction)" do
+          expect { invalid_import.import_data!(false) }.to raise_error(ImportError)
+          Product.count.should == 1
+        end
       end
     end
 
     describe "#destroy_products" do
       it "should also destroy associations" do
-        expect { (@import = ProductImport.create(:data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'products_with_properties.csv')))).import_data!(true) }.to change(Spree::Product, :count).by(1)
+        expect { (@import = ProductImport.create(:data_file => File.new(File.join(File.dirname(__FILE__), '..', 'fixtures', 'products_with_properties.csv')))).import_data!(true) }.to change(Product, :count).by(1)
         @import.destroy
-        Spree::Variant.count.should == 0
+        Variant.count.should == 0
       end
     end
   end

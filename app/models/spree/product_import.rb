@@ -42,6 +42,7 @@ module Spree
       end
 
       before_transition :to => [:failed] do |import|
+        import.product_ids = []
         import.failed_at = Time.now
         import.completed_at = nil
       end
@@ -69,6 +70,7 @@ module Spree
     # Meta keywords and description are created on the product model
 
     def import_data!(_transaction=true)
+      start
       if _transaction
         transaction do
           _import_data
@@ -134,10 +136,11 @@ module Spree
         log("Importing products for #{self.data_file_file_name} completed at #{DateTime.now}")
       rescue Exception => exp
         log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
+        failure
         raise ImportError, exp.message
       end
       #All done!
-      save #save product_ids
+      complete
       return [:notice, "Product data was successfully imported."]
     end
 
