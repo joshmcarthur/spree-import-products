@@ -82,14 +82,14 @@ module Spree
           (product = Product.last).product_properties.map(&:value).should == ["Rails"]
           product.variants.count.should == 2
         end
+
+        it "sets state to completed" do
+          valid_import.import_data!
+          valid_import.reload.state.should == "completed"
+        end
       end
 
       context "on invalid csv" do
-        it "rollback transation when params = true (transaction)" do
-          expect { invalid_import.import_data! }.to raise_error(ImportError)
-          Product.count.should == 0
-        end
-
         it "should not tracks product created ids" do
           expect { invalid_import.import_data! }.to raise_error(ImportError)
           invalid_import.reload
@@ -97,9 +97,28 @@ module Spree
           invalid_import.products.should be_empty
         end
 
-        it "sql are permanent when params = false (no transaction)" do
-          expect { invalid_import.import_data!(false) }.to raise_error(ImportError)
-          Product.count.should == 1
+        context "when params = true (transaction)" do
+          it "rollback transation" do
+            expect { invalid_import.import_data! }.to raise_error(ImportError)
+            Product.count.should == 0
+          end
+
+          it "sets state to failed" do
+            expect { invalid_import.import_data! }.to raise_error(ImportError)
+            invalid_import.reload.state.should == "failed"
+          end
+        end
+
+        context "when params = false (no transaction)" do
+          it "sql are permanent" do
+            expect { invalid_import.import_data!(false) }.to raise_error(ImportError)
+            Product.count.should == 1
+          end
+
+          it "sets state to failed" do
+            expect { invalid_import.import_data!(false) }.to raise_error(ImportError)
+            invalid_import.reload.state.should == "failed"
+          end
         end
       end
     end

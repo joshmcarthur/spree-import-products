@@ -78,6 +78,10 @@ module Spree
       else
         _import_data
       end
+    rescue Exception => exp
+      log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
+      failure
+      raise ImportError, exp.message
     end
 
     def _import_data
@@ -134,10 +138,6 @@ module Spree
         end
 
         log("Importing products for #{self.data_file_file_name} completed at #{DateTime.now}")
-      rescue Exception => exp
-        log("An error occurred during import, please check file and try again. (#{exp.message})\n#{exp.backtrace.join('\n')}", :error)
-        failure
-        raise ImportError, exp.message
       end
       #All done!
       complete
