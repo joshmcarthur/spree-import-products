@@ -223,7 +223,7 @@ module Spree
       params_hash.each do |field, value|
         if product.respond_to?("#{field}=")
           product.send("#{field}=", value)
-        elsif property = Spree::Property.where(["name = ? OR presentation = ?", field, field]).first
+        elsif property = Spree::Property.where(["name = ?", field]).first
           product.product_properties.build :value => value, :property => property
         end
       end
