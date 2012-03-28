@@ -2,7 +2,6 @@
 # Requires Paperclip and CSV to upload the CSV file and read it nicely.
 
 # Original Author:: Josh McArthur
-# Author:: Chetan Mittal
 # License:: MIT
 module Spree
   class ProductError < StandardError; end;
@@ -16,6 +15,7 @@ module Spree
     after_destroy :destroy_products
 
     serialize :product_ids, Array
+    cattr_accessor :settings
 
     def products
       Spree::Product.where :id => product_ids
@@ -92,14 +92,14 @@ module Spree
 
         rows = CSV.read(self.data_file.path)
 
-        if IMPORT_PRODUCT_SETTINGS[:first_row_is_headings]
+        if Spree::ProductImport.settings[:first_row_is_headings]
           col = get_column_mappings(rows[0])
         else
-          col = IMPORT_PRODUCT_SETTINGS[:column_mappings]
+          col = Spree::ProductImport.settings[:column_mappings]
         end
 
         log("Importing products for #{self.data_file_file_name} began at #{Time.now}")
-        rows[IMPORT_PRODUCT_SETTINGS[:rows_to_skip]..-1].each do |row|
+        rows[Spree::ProductImport.settings[:rows_to_skip]..-1].each do |row|
 
           product_information = {}
 
@@ -118,10 +118,10 @@ module Spree
           product_information[:available_on] = Date.today - 1.day if product_information[:available_on].nil?
           log("#{pp product_information}")
 
-          variant_comparator_field = IMPORT_PRODUCT_SETTINGS[:variant_comparator_field].try :to_sym
+          variant_comparator_field = Spree::ProductImport.settings[:variant_comparator_field].try :to_sym
           variant_comparator_column = col[variant_comparator_field]
 
-          if IMPORT_PRODUCT_SETTINGS[:create_variants] and variant_comparator_column and
+          if Spree::ProductImport.settings[:create_variants] and variant_comparator_column and
             p = Spree::Product.where(variant_comparator_field => row[variant_comparator_column]).first
 
             log("found product with this field #{variant_comparator_field}=#{row[variant_comparator_column]}")
@@ -133,7 +133,7 @@ module Spree
           end
         end
 
-        if IMPORT_PRODUCT_SETTINGS[:destroy_original_products]
+        if Spree::ProductImport.settings[:destroy_original_products]
           @products_before_import.each { |p| p.destroy }
         end
 
@@ -165,7 +165,7 @@ module Spree
         options[:with].delete(:id)
       end
 
-      field = IMPORT_PRODUCT_SETTINGS[:variant_comparator_field]
+      field = Spree::ProductImport.settings[:variant_comparator_field]
       log  "VARIANT:: #{variant.inspect}  /// #{options.inspect } /// #{options[:with][field]} /// #{field}"
 
       #Remap the options - oddly enough, Spree's product model has master_price and cost_price, while
@@ -193,12 +193,12 @@ module Spree
         variant.save
 
         #Associate our new variant with any new taxonomies
-        IMPORT_PRODUCT_SETTINGS[:taxonomy_fields].each do |field|
+        Spree::ProductImport.settings[:taxonomy_fields].each do |field|
           associate_product_with_taxon(variant.product, field.to_s, options[:with][field.to_sym])
         end
 
         #Finally, attach any images that have been specified
-        IMPORT_PRODUCT_SETTINGS[:image_fields].each do |field|
+        Spree::ProductImport.settings[:image_fields].each do |field|
           find_and_attach_image_to(variant, options[:with][field.to_sym])
         end
 
@@ -253,22 +253,22 @@ module Spree
 
 
         #Associate our new product with any taxonomies that we need to worry about
-        IMPORT_PRODUCT_SETTINGS[:taxonomy_fields].each do |field|
+        Spree::ProductImport.settings[:taxonomy_fields].each do |field|
           associate_product_with_taxon(product, field.to_s, params_hash[field.to_sym])
         end
 
         #Finally, attach any images that have been specified
-        IMPORT_PRODUCT_SETTINGS[:image_fields].each do |field|
+        Spree::ProductImport.settings[:image_fields].each do |field|
           find_and_attach_image_to(product, params_hash[field.to_sym])
         end
 
-        if IMPORT_PRODUCT_SETTINGS[:multi_domain_importing] && product.respond_to?(:stores)
+        if Spree::ProductImport.settings[:multi_domain_importing] && product.respond_to?(:stores)
           begin
             store = Store.find(
               :first,
               :conditions => ["id = ? OR code = ?",
-                params_hash[IMPORT_PRODUCT_SETTINGS[:store_field]],
-                params_hash[IMPORT_PRODUCT_SETTINGS[:store_field]]
+                params_hash[Spree::ProductImport.settings[:store_field]],
+                params_hash[Spree::ProductImport.settings[:store_field]]
               ]
             )
 
@@ -308,7 +308,7 @@ module Spree
     #Message is string, severity symbol - either :info, :warn or :error
 
     def log(message, severity = :info)
-      @rake_log ||= ActiveSupport::BufferedLogger.new(IMPORT_PRODUCT_SETTINGS[:log_to])
+      @rake_log ||= ActiveSupport::BufferedLogger.new(Spree::ProductImport.settings[:log_to])
       message = "[#{Time.now.to_s(:db)}] [#{severity.to_s.capitalize}] #{message}\n"
       @rake_log.send severity, message
       puts message
@@ -338,7 +338,7 @@ module Spree
     # images, and the file is accessible to the script.
     # It is basically just a wrapper around basic File IO methods.
     def fetch_local_image(filename)
-      filename = IMPORT_PRODUCT_SETTINGS[:product_image_path] + filename
+      filename = Spree::ProductImport.settings[:product_image_path] + filename
       unless File.exists?(filename) && File.readable?(filename)
         log("Image #{filename} was not found on the server, so this image was not imported.", :warn)
         return nil
@@ -381,7 +381,7 @@ module Spree
       # the taxonomy name, so unless we are using MySQL, this isn't going to work.
       taxonomy_name = taxonomy
       taxonomy = Spree::Taxonomy.find(:first, :conditions => ["lower(name) = ?", taxonomy])
-      taxonomy = Spree::Taxonomy.create(:name => taxonomy_name.capitalize) if taxonomy.nil? && IMPORT_PRODUCT_SETTINGS[:create_missing_taxonomies]
+      taxonomy = Spree::Taxonomy.create(:name => taxonomy_name.capitalize) if taxonomy.nil? && Spree::ProductImport.settings[:create_missing_taxonomies]
 
       taxon_hierarchy.split(/\s*\&\s*/).each do |hierarchy|
         hierarchy = hierarchy.split(/\s*>\s*/)
