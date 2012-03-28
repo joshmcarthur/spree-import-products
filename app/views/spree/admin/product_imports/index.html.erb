@@ -1,0 +1,41 @@
+<h2><%= t('form.product_import.heading') %></h2>
+
+<%= render "spree/shared/error_messages", :target => @product_import %>
+<%= form_for([:admin, @product_import], :method => :post, :html => { :multipart => true }) do |f| %>
+<fieldset>
+  <%= f.field_container :data_file do %>
+    <%= f.label :data_file, t('form.product_import.new.data_file') %>
+    <%= f.file_field :data_file %>
+    <%= f.error_message_on :data_file %>
+  <% end %>
+</fieldset>
+
+<p class="form-buttons">
+  <%= button t("actions.create") %>
+</p>
+<% end %>
+
+<table class="index">
+  <tr>
+    <th>Date creation</th>
+    <th>CSV Name</th>
+    <th>Status</th>
+    <th>Date Status</th>
+    <th>Products imported</th>
+    <th>Actions</th>
+  </tr>
+  <% Spree::ProductImport.order("created_at DESC").all.each do |import| %>
+    <tr>
+      <td><%= time_ago_in_words import.created_at, true -%> ago</td>
+      <td><%= import.data_file_file_name -%></td>
+      <td><%= t(import.state, :scope => "product_import.state") -%></td>
+      <td><%= time_ago_in_words import.state_datetime -%> ago</td>
+      <td><%= import.product_ids.size -%></td>
+      <td>
+        <%= link_to "Show", admin_product_import_path(import) -%>
+        &nbsp;
+        <%= link_to "Delete", admin_product_import_path(import), :method => :delete, :confirm => t("confirm_delete_product_import") -%>
+      </td>
+    </tr>
+  <% end %>
+</table>

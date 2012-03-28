@@ -1,0 +1,29 @@
+<div class="toolbar" data-hook="toolbar">
+  <ul class="actions">
+    <li id="delete_product_import">
+      <%= button_link_to t(:delete_product_import), admin_product_import_path(@product_import), {:method => :delete, :confirm => t("confirm_delete_product_import")} %>
+    </li>
+  </ul>
+  <br class="clear" />
+</div>
+
+<h1><%= t(:show_product_import) %></h1>
+
+<table class="index" id="listing_products">
+  <tr data-hook="admin_products_index_headers">
+    <th><%= t(:sku) %></th>
+    <th><%= t(:name) %></th>
+    <th><%= t(:master_price) %></th>
+    <th data-hook="admin_products_index_header_actions"></th>
+  </tr>
+<% @products.each do |product| %>
+  <tr <%= "style='color: red;'" if product.deleted? %> id="<%= dom_id product %>" data-hook="admin_products_index_rows">
+    <td><%= product.sku rescue '' %></td>
+    <td><%= product.name rescue '' %></td>
+    <td><%= number_to_currency product.price rescue '' %></td>
+    <td class="actions" data-hook="admin_products_index_row_actions">
+      <%= link_to "Edit", edit_admin_product_path(product), :class => 'edit' unless product.deleted? %>
+    </td>
+  </tr>
+<% end %>
+</table>

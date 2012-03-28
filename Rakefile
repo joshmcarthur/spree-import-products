@@ -1,14 +1,17 @@
-require File.expand_path('../../config/application', __FILE__)
-
-require 'rubygems'
 require 'rake'
 require 'rake/testtask'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
+require 'rspec/core/rake_task'
+require 'spree/core/testing_support/common_rake'
+
+RSpec::Core::RakeTask.new
+
+task :default => [:spec]
 
 spec = eval(File.read('import_products.gemspec'))
 
-Rake::GemPackageTask.new(spec) do |p|
+Gem::PackageTask.new(spec) do |p|
   p.gem_spec = spec
 end
 
@@ -19,13 +22,8 @@ task :release => :package do
   Rake::Task['gem:push'].invoke
 end
 
-desc "Default Task"
-task :default => [ :spec ]
-
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new
-
-# require 'cucumber/rake/task'
-# Cucumber::Rake::Task.new do |t|
-#   t.cucumber_opts = %w{--format pretty}
-# end
+desc "Generates a dummy app for testing"
+task :test_app do
+  ENV['LIB_NAME'] = 'import_products'
+  Rake::Task['common:test_app'].invoke
+end

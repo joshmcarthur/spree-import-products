@@ -53,22 +53,27 @@ All the configuration for this extension is inside the initializer generated whe
 In most cases, it's unlikely you will need to change defaults, but it's there is you need it.
 
 
-TODOs
-==============
-Ttttteeeessssttttiiinnnggg!!
+TESTING
+=======
+
+```ruby
+rake test_app
+cd spec/dummy
+rake db:create
+rake db:migrate db:test:prepare
+rails generate delayed_job:active_record
+```
 
 INSTALLATION
 ==============
 1. Add the gem to your Gemfile, and run bundle install.
     `gem 'import_products', :git => 'git://github.com/joshmcarthur/spree-import-products.git'` then `bundle install`
 
-2. 'Install' the extension - copy a migration and an initializer. `rake import_products:install`
+2. rails generate import_products:install
 
-3. Do a db migration. `rake db:migrate`
+3. Configure the extension to suit your application by changing config variables in `config/initializers/import_product_settings.rb`
 
-4. Configure the extension to suit your application by changing config variables in `config/initializers/import_product_settings.rb`
-
-5. Run application!
+4. Run application!
 
 ATTRIBUTION
 ==============

@@ -11,7 +11,7 @@ module ImportProducts
     def perform
       begin
         product_import = Spree::ProductImport.find(self.product_import_id)
-        results = product_import.import_data!
+        results = product_import.import_data!(IMPORT_PRODUCT_SETTINGS[:transaction])
         Spree::UserMailer.product_import_results(Spree::User.find(self.user_id)).deliver
       rescue Exception => exp
         Spree::UserMailer.product_import_results(Spree::User.find(self.user_id), exp.message).deliver
@@ -19,4 +19,3 @@ module ImportProducts
     end
   end
 end
-
