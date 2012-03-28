@@ -62,6 +62,7 @@ cd spec/dummy
 rake db:create
 rake db:migrate db:test:prepare
 rails generate delayed_job:active_record
+rails generate import_products:install
 ```
 
 INSTALLATION
