@@ -7,11 +7,11 @@ module Spree
         product; size; color; option_color; option_size
       end
 
-      let(:product) { Factory(:product, :sku => "001", :permalink => "S0388G-bloch-kids-tap-flexewe") }
-      let(:size) { Factory(:option_type, :name => "tshirt-size") }
-      let(:color) { Factory(:option_type, :name => "tshirt-color", :presentation => "Color") }
-      let(:option_color) { Factory(:option_value, :name => "blue", :presentation => "Blue", :option_type => color) }
-      let(:option_size) { Factory(:option_value, :name => "s", :presentation => "Small", :option_type => size) }
+      let(:product) { FactoryGirl.create(:product, :sku => "001", :permalink => "S0388G-bloch-kids-tap-flexewe") }
+      let(:size) { FactoryGirl.create(:option_type, :name => "tshirt-size") }
+      let(:color) { FactoryGirl.create(:option_type, :name => "tshirt-color", :presentation => "Color") }
+      let(:option_color) { FactoryGirl.create(:option_value, :name => "blue", :presentation => "Blue", :option_type => color) }
+      let(:option_size) { FactoryGirl.create(:option_value, :name => "s", :presentation => "Small", :option_type => size) }
 
       let(:params) do
         {:sku=>"002", :name=>"S0388G Bloch Kids Tap Flexww", :description=>"Lace Up Split Sole Leather Tap Shoe",
@@ -52,7 +52,7 @@ module Spree
       end
 
       it "throws an exception when variant with sku exist for another product" do
-        other_product = Factory(:product, :sku => "002")
+        other_product = FactoryGirl.create(:product, :sku => "002")
         expect do
           ProductImport.new.send(:create_variant_for, product, :with => params.merge(:"tshirt-size" => "Large", :"tshirt-color" => "Yellow"))
         end.to raise_error(SkuError)
