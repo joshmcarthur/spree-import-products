@@ -11,7 +11,7 @@ feature "Import products" do
     click_button "Create"
 
     page.should have_content("valid.csv")
-    page.should have_content("Created")
+    page.should have_content("added")
 
     Delayed::Worker.new.work_off
 
