@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec-rails')
   s.add_development_dependency('capybara')
   s.add_development_dependency('launchy', '2.0.5')
-  s.add_development_dependency('factory_girl')
+  s.add_development_dependency('factory_girl', '3.6.1')
 
   if RUBY_VERSION < "1.9"
     s.add_development_dependency('ruby-debug')
