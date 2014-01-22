@@ -61,8 +61,8 @@ rake test_app
 cd spec/dummy
 rake db:create
 rake db:migrate db:test:prepare
-rails generate delayed_job:active_record
-rails generate import_products:install
+RAILS_ENV=test rails generate delayed_job:active_record
+RAILS_ENV=test rails generate import_products:install
 ```
 
 INSTALLATION
